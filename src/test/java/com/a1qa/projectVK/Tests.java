@@ -6,11 +6,11 @@ import com.a1qa.projectVK.pages.NewsPage;
 import com.a1qa.projectVK.utils.ComparePhotos;
 import com.a1qa.projectVK.utils.GetScreenShot;
 import com.a1qa.projectVK.utils.JsonHelper;
-import com.a1qa.projectVK.utils.VkApiRequests;
+import com.a1qa.projectVK.requests.VkApiRequests;
 import org.testng.Assert;
 import org.testng.annotations.Test;
 
-import static com.a1qa.projectVK.utils.VkApiRequests.*;
+import static com.a1qa.projectVK.requests.VkApiRequests.*;
 
 public class Tests extends BaseTest {
     AuthorizationPage mainPage = new AuthorizationPage();

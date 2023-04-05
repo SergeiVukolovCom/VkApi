@@ -1,5 +1,8 @@
-package com.a1qa.projectVK.utils;
+package com.a1qa.projectVK.requests;
 
+import com.a1qa.projectVK.utils.JsonHelper;
+import com.a1qa.projectVK.utils.RandomString;
+import com.a1qa.projectVK.utils.VkApiUtils;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.exceptions.UnirestException;

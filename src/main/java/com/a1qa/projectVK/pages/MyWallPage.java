@@ -5,7 +5,7 @@ import aquality.selenium.elements.interfaces.IButton;
 import aquality.selenium.elements.interfaces.ITextBox;
 import org.openqa.selenium.By;
 
-import static com.a1qa.projectVK.utils.VkApiRequests.postId;
+import static com.a1qa.projectVK.requests.VkApiRequests.postId;
 
 public class MyWallPage {
 
