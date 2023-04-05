@@ -13,29 +13,20 @@ import java.util.LinkedList;
 import java.util.List;
 
 public class VkApiRequests {
-    public static int postId;
-    private static List<String> dataFromUrl = new LinkedList<>();
-    private static RandomString randomString = new RandomString();
-    public static String stringRandom;
-    public static String stringRand;
-    public static String stringComment;
 
-    public static void postTextToWall() {
-        stringRandom = randomString.getRandomString();
+    public static int postTextToWall(String text) {
         String request = String.format(JsonHelper.getValueFromRequestJson("wall.post"), JsonHelper.getValueFromJson("owner_id"),
-                stringRandom, JsonHelper.getValueFromJson("token"), JsonHelper.getValueFromJson("api_version"));
+                text, JsonHelper.getValueFromJson("token"), JsonHelper.getValueFromJson("api_version"));
         try {
-            postId = VkApiUtils.postRequest(request).asJson().getBody().getObject().getJSONObject("response").getInt("post_id");
-            System.out.println(postId);
+            return VkApiUtils.postRequest(request).asJson().getBody().getObject().getJSONObject("response").getInt("post_id");
         } catch (UnirestException e) {
             throw new RuntimeException(e);
         }
     }
 
-    public static int editPostOnWall() {
-        stringRand = randomString.getRandomString();
+    public static int editPostOnWall(String text, String editText) {
         String request = String.format(JsonHelper.getValueFromRequestJson("wall.edit"), JsonHelper.getValueFromJson("owner_id"),
-                postId, JsonHelper.getValueFromJson("owner_id"), saveUploadWallPhoto(), stringRand,
+                postTextToWall(text), JsonHelper.getValueFromJson("owner_id"), saveUploadWallPhoto(), editText,
                 JsonHelper.getValueFromJson("token"), JsonHelper.getValueFromJson("api_version"));
         try {
             return VkApiUtils.postRequest(request).asJson().getStatus();
@@ -44,9 +35,9 @@ public class VkApiRequests {
         }
     }
 
-    public static int deletePostOnWall() {
+    public static int deletePostOnWall(String text) {
         String request = String.format(JsonHelper.getValueFromRequestJson("wall.delete"), JsonHelper.getValueFromJson("owner_id"),
-                postId, JsonHelper.getValueFromJson("token"), JsonHelper.getValueFromJson("api_version"));
+                postTextToWall(text), JsonHelper.getValueFromJson("token"), JsonHelper.getValueFromJson("api_version"));
         try {
             return VkApiUtils.postRequest(request).asJson().getStatus();
         } catch (UnirestException e) {
@@ -65,6 +56,7 @@ public class VkApiRequests {
     }
 
     public static List<String> getDataFromUploadUrl() {
+        List<String> dataFromUrl = new LinkedList<>();
         try {
              HttpResponse<JsonNode> response = VkApiUtils.postRequest(getWallPhotoUploadServer()).field("photo", new File("src/test/resources/avatar.png")).asJson();
              dataFromUrl.add(response.getBody().getObject().getString("photo"));
@@ -78,8 +70,8 @@ public class VkApiRequests {
 
     public static int saveUploadWallPhoto() {
         String request = String.format(JsonHelper.getValueFromRequestJson("photos.saveWallPhoto"),
-                JsonHelper.getValueFromJson("owner_id"), URLEncoder.encode(dataFromUrl.get(0), StandardCharsets.UTF_8), dataFromUrl.get(1),
-                dataFromUrl.get(2), JsonHelper.getValueFromJson("token"), JsonHelper.getValueFromJson("api_version"));
+                JsonHelper.getValueFromJson("owner_id"), URLEncoder.encode(getDataFromUploadUrl().get(0), StandardCharsets.UTF_8), getDataFromUploadUrl().get(1),
+                getDataFromUploadUrl().get(2), JsonHelper.getValueFromJson("token"), JsonHelper.getValueFromJson("api_version"));
         try {
             return VkApiUtils.postRequest(request).asJson().getBody().getObject().getJSONArray("response").getJSONObject(0).getInt("id");
         } catch (UnirestException e) {
@@ -87,10 +79,9 @@ public class VkApiRequests {
         }
     }
 
-    public static int createComment() {
-        stringComment = randomString.getRandomString();
+    public static int createComment(String text, String comment) {
         String request = String.format(JsonHelper.getValueFromRequestJson("wall.createComment"),
-                JsonHelper.getValueFromJson("owner_id"), postId, stringComment, JsonHelper.getValueFromJson("token"),
+                JsonHelper.getValueFromJson("owner_id"), postTextToWall(text), comment, JsonHelper.getValueFromJson("token"),
                 JsonHelper.getValueFromJson("api_version"));
         try {
             return VkApiUtils.postRequest(request).asJson().getStatus();
@@ -99,9 +90,9 @@ public class VkApiRequests {
         }
     }
 
-    public static String getLike() {
+    public static String getLike(String text) {
         String request = String.format(JsonHelper.getValueFromRequestJson("likes.getList"), JsonHelper.getValueFromJson("owner_id"),
-                postId, JsonHelper.getValueFromJson("token"), JsonHelper.getValueFromJson("api_version"));
+                postTextToWall(text), JsonHelper.getValueFromJson("token"), JsonHelper.getValueFromJson("api_version"));
         return VkApiUtils.getRequest(request).getBody().getObject().getJSONObject("response").getJSONArray("items").get(0).toString();
     }
 
